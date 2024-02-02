@@ -1,5 +1,4 @@
 import os
-import sys
 import pygame
 import requests
 
@@ -16,7 +15,7 @@ def new_search(x, y, z, tipe):
     response = requests.get(api_server, params)
 
     if not response:
-        sys.exit(1)
+        return 1
 
     global map_file
     with open(map_file, "wb") as file:
@@ -41,17 +40,18 @@ def draw_map():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.K_UP:
-                print(2)
-                if z > 1:
-                    z -= 1
-                    new_search(x, y, z, tipe)
-                    a = pygame.image.load(map_file)
-            elif event.type == pygame.K_DOWN:
-                if z < 20:
-                    z += 1
-                    new_search(x, y, z, tipe)
-                    a = pygame.image.load(map_file)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_PAGEUP:
+                    if z > 1:
+                        z -= 1
+                        if new_search(x, y, z, tipe) != 1:
+                            a = pygame.image.load(map_file)
+                elif event.key == pygame.K_PAGEDOWN:
+                    if z < 20:
+                        print(z)
+                        z += 1
+                        if new_search(x, y, z, tipe) != 1:
+                            a = pygame.image.load(map_file)
         screen.blit(a, (0, 0))
         pygame.display.flip()
     pygame.quit()
