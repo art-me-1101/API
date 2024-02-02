@@ -6,10 +6,14 @@ import requests
 map_file = 'map.png'
 
 
-def new_search(coordinate, z, tipe):
-    x, y = map(float, coordinate.split())
-    map_request = f"http://static-maps.yandex.ru/1.x/?ll={x},{y}&z={z}&l={tipe}"
-    response = requests.get(map_request)
+def new_search(x, y, z, tipe):
+    api_server = "http://static-maps.yandex.ru/1.x/"
+    params = {
+        'll': ','.join([str(i) for i in (x, y)]),
+        'z': str(z),
+        'l': tipe
+    }
+    response = requests.get(api_server, params)
 
     if not response:
         sys.exit(1)
@@ -24,6 +28,9 @@ def user_input():
 
 
 def draw_map():
+    coordinate, z, tipe = user_input()
+    x, y = map(float, coordinate.split())
+    new_search(x, y, z, tipe)
     pygame.init()
     a = pygame.image.load(map_file)
     b = a.get_rect()
@@ -38,5 +45,4 @@ def draw_map():
 
 
 if __name__ == '__main__':
-    new_search(*user_input())
     draw_map()
